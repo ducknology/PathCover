@@ -3,16 +3,20 @@
 //  XHPathCover
 //
 //  Created by 曾 宪华 on 14-2-7.
-//  Copyright (c) 2014年 嗨，我是曾宪华(@xhzengAIB)，曾加入YY Inc.担任高级移动开发工程师，拍立秀App联合创始人，热衷于简洁、而富有理性的事物 QQ:543413507 主页:http://zengxianhua.com All rights reserved.
+//  Copyright (c) 2014年 曾宪华 开发团队(http://iyilunba.com ) 本人QQ:543413507 本人QQ群（142557668）. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+
+@protocol XHPathCoverRefresh;
 
 // user info key for Dictionary
 extern NSString *const XHUserNameKey;
 extern NSString *const XHBirthdayKey;
 
 @interface XHPathCover : UIView
+
+@property (nonatomic, weak) id<XHPathCoverRefresh> delegate;
 
 // parallax background
 @property (nonatomic, strong) UIImageView *bannerImageView;
@@ -38,7 +42,8 @@ extern NSString *const XHBirthdayKey;
 
 @property (nonatomic, copy) void(^handleRefreshEvent)(void);
 
-@property (nonatomic, copy) void(^handleTapBackgroundImageEvent)(void);
+
+- (id)initWithFrame:(CGRect)frame align:(int)align;
 
 // stop Refresh
 - (void)stopRefresh;
@@ -60,4 +65,9 @@ extern NSString *const XHBirthdayKey;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+@end
+
+@protocol XHPathCoverRefresh <NSObject>
+@optional
+-(void)Refreshed;
 @end

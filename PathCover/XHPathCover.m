@@ -3,7 +3,7 @@
 //  XHPathCover
 //
 //  Created by 曾 宪华 on 14-2-7.
-//  Copyright (c) 2014年 嗨，我是曾宪华(@xhzengAIB)，曾加入YY Inc.担任高级移动开发工程师，拍立秀App联合创始人，热衷于简洁、而富有理性的事物 QQ:543413507 主页:http://zengxianhua.com All rights reserved.
+//  Copyright (c) 2014年 曾宪华 开发团队(http://iyilunba.com ) 本人QQ:543413507 本人QQ群（142557668）. All rights reserved.
 //
 
 #import "XHPathCover.h"
@@ -180,6 +180,10 @@ NSString *const XHBirthdayKey = @"XHBirthday";
 
 - (void)stopRefresh {
     [_waterDropRefresh stopRefresh];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(Refreshed)]) {
+        [self.delegate Refreshed];
+    }
     if(_touching == NO) {
         [self resetTouch];
     } else {
@@ -342,12 +346,11 @@ NSString *const XHBirthdayKey = @"XHBirthday";
 }
 
 #pragma mark - Life cycle
-
-- (id)initWithFrame:(CGRect)frame {
+- (id)initWithFrame:(CGRect)frame align:(int )align {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        [self _setup];
+        [self _setup:align];
     }
     return self;
 }
@@ -356,12 +359,12 @@ NSString *const XHBirthdayKey = @"XHBirthday";
     self = [super initWithCoder:aDecoder];
     if(self)
     {
-        [self _setup];
+        [self _setup:1];
     }
     return self;
 }
 
-- (void)_setup {
+- (void)_setup:(int)position {
     self.parallaxHeight = 170;
     self.isLightEffect = YES;
     self.lightEffectPadding = 80;
@@ -369,8 +372,6 @@ NSString *const XHBirthdayKey = @"XHBirthday";
     
     _bannerView = [[UIView alloc] initWithFrame:self.bounds];
     _bannerView.clipsToBounds = YES;
-    UITapGestureRecognizer *tapGestureRecongnizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecongnizerHandle:)];
-    [_bannerView addGestureRecognizer:tapGestureRecongnizer];
     
     _bannerImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, -self.parallaxHeight, CGRectGetWidth(_bannerView.frame), CGRectGetHeight(_bannerView.frame) + self.parallaxHeight * 2)];
     _bannerImageView.contentMode = UIViewContentModeScaleToFill;
@@ -384,7 +385,9 @@ NSString *const XHBirthdayKey = @"XHBirthday";
     
     CGFloat waterDropRefreshHeight = 100;
     CGFloat waterDropRefreshWidth = 20;
-    _waterDropRefresh = [[XHWaterDropRefresh alloc] initWithFrame:CGRectMake(33, CGRectGetHeight(self.bounds) - waterDropRefreshHeight, waterDropRefreshWidth, waterDropRefreshHeight)];
+    CGFloat x_position = (position == 1)?(self.frame.size.width * 0.95f)+5.5f:(self.frame.size.width * 0.05f)+5.5f;
+    
+    _waterDropRefresh = [[XHWaterDropRefresh alloc] initWithFrame:CGRectMake(x_position - waterDropRefreshWidth , CGRectGetHeight(self.bounds) - waterDropRefreshHeight, waterDropRefreshWidth, waterDropRefreshHeight)];
     _waterDropRefresh.refreshCircleImage = [UIImage imageNamed:@"circle"];
     _waterDropRefresh.offsetHeight = 20; // 线条的长度
     [self addSubview:self.waterDropRefresh];
@@ -450,12 +453,6 @@ NSString *const XHBirthdayKey = @"XHBirthday";
 }
 
 #pragma mark - previte method
-
-- (void)tapGestureRecongnizerHandle:(UITapGestureRecognizer *)tapGestureRecongnizer {
-    if (self.handleTapBackgroundImageEvent) {
-        self.handleTapBackgroundImageEvent();
-    }
-}
 
 - (void)setIsRefreshed:(BOOL)b {
     isrefreshed = b;
